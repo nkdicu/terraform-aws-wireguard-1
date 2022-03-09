@@ -1,7 +1,10 @@
 #!/bin/bash -v
 apt-get update -y
 DEBIAN_FRONTEND=noninteractive apt-get upgrade -y -o Dpkg::Options::="--force-confnew"
-apt-get install -y wireguard-dkms wireguard-tools awscli
+apt-get upgrade -y
+apt-get install -y wireguard-dkms wireguard-tools awscli unattended-upgrades
+
+echo -e 'Unattended-Upgrade::Automatic-Reboot "true";' >> /etc/apt/apt.conf.d/50unattended-upgrades
 
 cat > /etc/wireguard/wg0.conf <<- EOF
 [Interface]
@@ -28,5 +31,7 @@ sysctl -p
 ufw allow ssh
 ufw allow ${wg_server_port}/udp
 ufw --force enable
-systemctl enable wg-quick@wg0.service
-systemctl start wg-quick@wg0.service
+systemctl enable --now wg-quick@wg0.service
+systemctl enable --now unattended-upgrades
+# Allows any security patches to be applied.
+systemctl reboot
