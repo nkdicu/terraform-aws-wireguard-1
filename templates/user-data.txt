@@ -33,5 +33,3 @@ ufw allow ${wg_server_port}/udp
 ufw --force enable
 systemctl enable --now wg-quick@wg0.service
 systemctl enable --now unattended-upgrades
-# Allows any security patches to be applied.
-systemctl reboot
